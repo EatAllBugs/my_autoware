@@ -1,0 +1,40 @@
+<launch>
+  <arg name="config_dir" default="/home/lys/config_data"/>
+  <!-- TF -->
+  <include file="$(env HOME)/.autoware/data/tf/tf.launch"/>
+
+  <!-- Point Cloud -->
+  <node pkg="map_file" type="points_map_loader" name="points_map_loader" args="noupdate  $(env HOME)/.autoware/data/map/pointcloud_map/nongmu.pcd"/>
+
+  <!-- Vector Map -->
+  <arg name="max_speed" default="1.2"/>
+  <arg name="min_speed" default="0.4"/>
+  <arg name="stop_speed" default="0.4"/>
+
+  <arg name="station_x" default="-48.094"/>
+  <arg name="station_y" default="-156.145"/>
+
+  <!--雷达安装位置-->
+  <arg name="tf_data" default="2.35 0.0 0.0 -3.141592653 0.0 0.0"/>
+  <!--frame_id-->
+  <arg name="global_frame" default="map"/>
+  <arg name="base_frame" default="base_link"/>
+  <arg name="scan_frame" default="velodyne"/>
+
+  <node pkg="global_planner" type="global_planner" name="global_planner" output="log">
+     <param name="nav_goal_file_name" value="$(arg config_dir)/nav_goal.csv"/>
+     <param name="obstacle_directory" value="$(arg config_dir)/obstacle"/>
+     <param name="center_directory" value="$(arg config_dir)/center"/>
+     <param name="global_frame" value="$(arg global_frame)"/>
+     <param name="deceleration_distance" value="5.0"/>
+     <param name="max_speed" value="$(arg max_speed)"/>
+     <param name="turn_speed" value="$(arg min_speed)"/>
+     <param name="min_speed" value="$(arg stop_speed)"/>
+     <param name="robot_radius" value="1.0"/>
+     <param name="curr_to_nearest_thre" value="2.5"/>
+     <param name="station_x" type="double" value="$(arg station_x)"/>
+     <param name="station_y" type="double" value="$(arg station_y)"/>
+     <param name="station_speed" type="double" value="0.2"/>
+    </node>
+
+</launch>

@@ -1,0 +1,117 @@
+<launch>
+    <arg name="home" default="/home/lys"/>
+    <arg name="config_dir" default="$(arg home)/config_data"/>
+    <arg name="run_all" default="true"/>
+
+    <!--车体速度-->
+    <arg name="max_speed" default="1.2"/>
+    <arg name="min_speed" default="0.4"/>
+    <arg name="stop_speed" default="0.4"/>
+
+    <arg name="station_x" default="-48.094"/>
+    <arg name="station_y" default="-156.145"/>
+
+    <!--雷达安装位置-->
+    <arg name="tf_data" default="2.35 0.0 0.0 -3.141592653 0.0 0.0"/>
+
+    <!--frame_id-->
+    <arg name="global_frame" default="map"/>
+    <arg name="base_frame" default="base_link"/>
+    <arg name="scan_frame" default="velodyne"/>
+
+    <!--是否使用后轮转向-->
+    <arg name="use_rear_steering" default="false"/>
+
+    <!--日志目录-->
+    <param name="log_dir" value="$(arg home)/log/nav"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="map_to_world" args="0 0 0 0 0 0 /world /map 10"/>
+    <node pkg="tf" type="static_transform_publisher" name="base_to_link" args="$(arg tf_data) /base_link /velodyne 10"/>
+
+    <!--node pkg="chc_rtk" type="chc_rtk_node" name="chc_rtk" output="log" if="$(arg run_all)">
+        <param name="port" type="string" value="/dev/ttysWK2"/>
+        <param name="baudrate" type="int" value="115200"/>
+        <rosparam file="$(arg config_dir)/param/gps_origin.yaml" command="load"/>
+        <remap from="/current_pose" to="/gps_pose"/>
+    </node-->
+
+    <node pkg="msf_localizer" type="multiSensorFusion" name="multiSensorFusion" output="log">
+        <param name="pcd_dir" value="$(arg config_dir)/pcd"/>
+        <param name="map_frame" value="$(arg global_frame)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="scan_frame" value="$(arg scan_frame)"/>
+        <remap from="/aft_mapped_to_init_high_frec" to="/odom"/>
+    </node>
+
+    <node pkg="global_planner" type="global_planner" name="global_planner" output="log">
+        <param name="nav_goal_file_name" value="$(arg config_dir)/nav_goal.csv"/>
+        <param name="obstacle_directory" value="$(arg config_dir)/obstacle"/>
+        <param name="center_directory" value="$(arg config_dir)/center"/>
+        <param name="global_frame" value="$(arg global_frame)"/>
+        <param name="deceleration_distance" value="5.0"/>
+        <param name="max_speed" value="$(arg max_speed)"/>
+        <param name="turn_speed" value="$(arg min_speed)"/>
+        <param name="min_speed" value="$(arg stop_speed)"/>
+        <param name="robot_radius" value="1.0"/>
+        <param name="curr_to_nearest_thre" value="2.5"/>
+        <param name="station_x" type="double" value="$(arg station_x)"/>
+        <param name="station_y" type="double" value="$(arg station_y)"/>
+        <param name="station_speed" type="double" value="0.2"/>
+    </node>
+
+    <node pkg="control" type="pure_pursuit" name="pure_pursuit" output="log">
+        <param name="global_frame" value="$(arg global_frame)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="frequency" value="30"/>
+        <param name="enable_speed_feedback" value="false"/>
+        <param name="wheelbase" value="1.78"/>
+        <param name="forward_base" value="1.0"/>
+        <param name="forward_kv" value="2.0"/>
+        <param name="backward_base" value="1.0"/>
+        <param name="backward_kv" value="2.0"/>
+        <param name="danger_wait_time" value="10.0"/>
+        <param name="use_rear_steering" type="bool" value="$(arg use_rear_steering)"/>
+        <remap from="/final_waypoints" to="/base_waypoints"/>
+    </node>
+
+    <node name="road_sort" pkg="road_sort" type="road_sort_node" output="log">
+        <param name="joint_file" type="string" value="$(arg config_dir)/joint_id.csv"/>
+    </node>
+
+    <node name="data_conversion_node" pkg="data_conversion" type="data_conversion_node" output="log">
+        <param name="loop_rate" type="int" value="20"/>
+        <param name="stop_width" type="double" value="999.0"/>
+        <param name="reverse" type="int" value="1"/>
+        <param name="max_stop_distance" type="double" value="6.0"/>
+        <param name="min_stop_distance" type="double" value="3.0"/>
+        <param name="max_speed" type="double" value="$(arg max_speed)"/>
+        <param name="min_speed" type="double" value="$(arg min_speed)"/>
+        <param name="station_x" type="double" value="$(arg station_x)"/>
+        <param name="station_y" type="double" value="$(arg station_y)"/>
+    </node>
+
+    <!--node name="mybase_driver" pkg="mybase_driver_can" type="mybase_driver_can_node" output="log">
+        <param name="loop_rate" type="int" value="30"/>
+        <param name="wheel_circumference" type="double" value="1.413"/>
+        <param name="drive_ratio" type="double" value="32"/>
+        <param name="speed_scale" type="double" value="0.9"/>
+        <param name="odom_scale" type="double" value="0.179701123629841"/>
+        <param name="use_external_imu" type="bool" value="false"/>
+        <param name="use_rear_steering" type="bool" value="$(arg use_rear_steering)"/>
+        <param name="reverse_speed" type="bool" value="false"/>
+        <param name="reverse_odom" type="bool" value="true"/>
+    </node-->
+
+    <node pkg="socketcan_bridge" type="socketcan_to_topic_node" name="socketcan_to_topic_node" output="log"
+          if="$(arg run_all)">
+        <param name="can_device" value="can0"/>
+    </node>
+    <node pkg="socketcan_bridge" type="topic_to_socketcan_node" name="topic_to_socketcan_node" output="log"
+          if="$(arg run_all)">
+        <param name="can_device" value="can0"/>
+    </node>
+    <include file="$(find lslidar_c16_decoder)/launch/lslidar_c16.launch" if="$(arg run_all)"/>
+    <node pkg="launch" type="run_robot.sh" name="myrobot" output="log" if="$(arg run_all)"/>
+    <node pkg="launch" type="run_jtop.sh" name="jtop" output="log" if="$(arg run_all)"/>
+    <node pkg="launch" type="run_record.sh" name="record" output="log" if="$(arg run_all)"/>
+</launch>

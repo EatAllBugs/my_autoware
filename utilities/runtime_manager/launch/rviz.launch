@@ -1,0 +1,6 @@
+<launch>
+  <param name="/use_sim_time" value="false" />
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find runtime_manager)/rviz/config.rviz" output="screen"/>
+</launch>
+
