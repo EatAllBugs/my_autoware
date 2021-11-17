@@ -31,16 +31,15 @@
 
 #include "costmap_generator/costmap_generator.h"
 
-class TestClass
-{
-private:
+class TestClass {
+ private:
   const double dummy_grid_length_x_;
   const double dummy_grid_length_y_;
   const double dummy_grid_resolution_;
   const double dummy_grid_position_x_;
   const double dummy_grid_position_y_;
   const double dummy_initialize_cost_;
-public:
+ public:
   TestClass();
 
   const double dummy_maximum_lidar_height_thres_;
@@ -49,89 +48,93 @@ public:
   const double dummy_grid_max_value_;
   const std::string dummy_layer_name_;
 
-  geometry_msgs::Point* dummy_point_;
+  geometry_msgs::Point *dummy_point_;
 
-  pcl::PointXYZ* dummy_pcl_point_;
+  pcl::PointXYZ *dummy_pcl_point_;
 
-  autoware_msgs::DetectedObject* dummy_object_;
+  autoware_msgs::DetectedObject *dummy_object_;
 
   autoware_msgs::DetectedObjectArray::Ptr dummy_objects_array_;
 
-  grid_map::GridMap* dummy_costmap_;
+  grid_map::GridMap *dummy_costmap_;
 
   PointsToCostmap *points2costmap_;
 
   std::unique_ptr<std::vector<std::vector<std::vector<double>>>> dummy_3d_vec_;
 
-  void fillDummyObjectParam(autoware_msgs::DetectedObject* dummy_object);
+  void fillDummyObjectParam(autoware_msgs::DetectedObject *dummy_object);
 
-  void fillDummyObjectsArrayParam(autoware_msgs::DetectedObjectArray::Ptr dummy_objects_array);
+  void fillDummyObjectsArrayParam(autoware_msgs::DetectedObjectArray::Ptr
+    dummy_objects_array);
 
-  void fillDummyCostmapParam(grid_map::GridMap* dummy_costmap);
+  void fillDummyCostmapParam(grid_map::GridMap *dummy_costmap);
 
   void initDummy3DVecParam();
 
 
   std::vector<std::vector<std::vector<double>>>
-  assignPoints2GridCell(const grid_map::GridMap& gridmap, const pcl::PointCloud<pcl::PointXYZ>::Ptr& in_sensor_points);
+  assignPoints2GridCell(const grid_map::GridMap &gridmap,
+    const pcl::PointCloud<pcl::PointXYZ>::Ptr &in_sensor_points);
 
-  grid_map::Index fetchGridIndexFromPoint(const grid_map::GridMap& gridmap, const pcl::PointXYZ& point);
+  grid_map::Index fetchGridIndexFromPoint(const grid_map::GridMap &gridmap,
+    const pcl::PointXYZ &point);
 
-  bool isValidInd(const grid_map::GridMap& gridmap, const grid_map::Index& grid_ind);
+  bool isValidInd(const grid_map::GridMap &gridmap,
+    const grid_map::Index &grid_ind);
 
   grid_map::Matrix calculateCostmap(const double maximum_height_thres,
-                                    const double minimum_lidar_height_thres, const double grid_min_value,
-                                    const double grid_max_value, const grid_map::GridMap& gridmap,
-                                    const std::string& gridmap_layer_name,
-                                    const std::vector<std::vector<std::vector<double>>> grid_vec);
+    const double minimum_lidar_height_thres, const double grid_min_value,
+    const double grid_max_value, const grid_map::GridMap &gridmap,
+    const std::string &gridmap_layer_name,
+    const std::vector<std::vector<std::vector<double>>> grid_vec);
 
 
   ObjectsToCostmap *objects2costmap_;
-  Eigen::MatrixXd makeRectanglePoints(const autoware_msgs::DetectedObject& in_object,
+  Eigen::MatrixXd makeRectanglePoints(const autoware_msgs::DetectedObject
+    &in_object,
     const double expand_rectangle_size);
-  geometry_msgs::Point makeExpandedPoint(const geometry_msgs::Point& in_centroid,
-                                         const geometry_msgs::Point32& in_corner_point,
-                                         const double expand_polygon_size);
+  geometry_msgs::Point makeExpandedPoint(const geometry_msgs::Point &in_centroid,
+    const geometry_msgs::Point32 &in_corner_point,
+    const double expand_polygon_size);
 
-  grid_map::Polygon makePolygonFromObjectConvexHull(const autoware_msgs::DetectedObject& in_object,
-                                                    const double expand_polygon_size);
+  grid_map::Polygon makePolygonFromObjectConvexHull(const
+    autoware_msgs::DetectedObject &in_object,
+    const double expand_polygon_size);
 
-  void setCostInPolygon(const grid_map::Polygon& polygon, const std::string& gridmap_layer_name,
-                                       const float score, grid_map::GridMap& objects_costmap);
+  void setCostInPolygon(const grid_map::Polygon &polygon,
+    const std::string &gridmap_layer_name,
+    const float score, grid_map::GridMap &objects_costmap);
 
-  grid_map::Matrix makeCostmapFromObjects(const grid_map::GridMap& costmap,
-                                          const double expand_polygon_size,
-                                          const double size_of_expansion_kernel,
-                                          const autoware_msgs::DetectedObjectArray::ConstPtr& in_objects,
-                                          const bool use_objects_convex_hull);
+  grid_map::Matrix makeCostmapFromObjects(const grid_map::GridMap &costmap,
+    const double expand_polygon_size,
+    const double size_of_expansion_kernel,
+    const autoware_msgs::DetectedObjectArray::ConstPtr &in_objects,
+    const bool use_objects_convex_hull);
 };
 
 TestClass::TestClass():
-dummy_grid_length_x_(10),
-dummy_grid_length_y_(10),
-dummy_grid_resolution_(1),
-dummy_grid_position_x_(0),
-dummy_grid_position_y_(0),
-dummy_initialize_cost_(0),
-dummy_maximum_lidar_height_thres_(3.0),
-dummy_minimum_lidar_height_thres_(-2.0),
-dummy_grid_min_value_(0.0),
-dummy_grid_max_value_(1.0),
-dummy_layer_name_("test")
-{
-
+  dummy_grid_length_x_(10),
+  dummy_grid_length_y_(10),
+  dummy_grid_resolution_(1),
+  dummy_grid_position_x_(0),
+  dummy_grid_position_y_(0),
+  dummy_initialize_cost_(0),
+  dummy_maximum_lidar_height_thres_(3.0),
+  dummy_minimum_lidar_height_thres_(-2.0),
+  dummy_grid_min_value_(0.0),
+  dummy_grid_max_value_(1.0),
+  dummy_layer_name_("test") {
 }
 
-void TestClass::fillDummyCostmapParam(grid_map::GridMap* dummy_costmap)
-{
-  dummy_costmap->setGeometry(grid_map::Length(dummy_grid_length_x_, dummy_grid_length_y_), dummy_grid_resolution_,
-                      grid_map::Position(dummy_grid_position_x_, dummy_grid_position_y_));
-
+void TestClass::fillDummyCostmapParam(grid_map::GridMap *dummy_costmap) {
+  dummy_costmap->setGeometry(grid_map::Length(dummy_grid_length_x_,
+      dummy_grid_length_y_), dummy_grid_resolution_,
+    grid_map::Position(dummy_grid_position_x_, dummy_grid_position_y_));
   dummy_costmap->add(dummy_layer_name_, dummy_initialize_cost_);
 }
 
-void TestClass::fillDummyObjectParam(autoware_msgs::DetectedObject* dummy_object)
-{
+void TestClass::fillDummyObjectParam(autoware_msgs::DetectedObject
+  *dummy_object) {
   dummy_object->header.frame_id = "test";
   dummy_object->pose.position.x = 0;
   dummy_object->pose.position.y = 0;
@@ -146,8 +149,8 @@ void TestClass::fillDummyObjectParam(autoware_msgs::DetectedObject* dummy_object
   dummy_object->score = 1;
 }
 
-void TestClass::fillDummyObjectsArrayParam(autoware_msgs::DetectedObjectArray::Ptr dummy_objects_array)
-{
+void TestClass::fillDummyObjectsArrayParam(
+  autoware_msgs::DetectedObjectArray::Ptr dummy_objects_array) {
   autoware_msgs::DetectedObject object;
   object.header.frame_id = "test";
   geometry_msgs::Point32 point;
@@ -174,10 +177,11 @@ void TestClass::fillDummyObjectsArrayParam(autoware_msgs::DetectedObjectArray::P
   dummy_objects_array->objects.push_back(object);
 }
 
-void TestClass::initDummy3DVecParam()
-{
-  double y_cell_size = std::ceil(dummy_grid_length_y_ * (1 / dummy_grid_resolution_));
-  double x_cell_size = std::ceil(dummy_grid_length_x_ * (1 / dummy_grid_resolution_));
+void TestClass::initDummy3DVecParam() {
+  double y_cell_size = std::ceil(dummy_grid_length_y_ * (1 /
+        dummy_grid_resolution_));
+  double x_cell_size = std::ceil(dummy_grid_length_x_ * (1 /
+        dummy_grid_resolution_));
   std::vector<double> z_vec;
   std::vector<std::vector<double>> vec_y_z(y_cell_size, z_vec);
   dummy_3d_vec_.reset(new
@@ -185,15 +189,16 @@ void TestClass::initDummy3DVecParam()
 }
 
 
-Eigen::MatrixXd TestClass::makeRectanglePoints(const autoware_msgs::DetectedObject& in_object,
-                                               const double expanded_rectangle_size)
-{
-  return objects2costmap_->makeRectanglePoints(in_object, expanded_rectangle_size);
+Eigen::MatrixXd TestClass::makeRectanglePoints(const
+  autoware_msgs::DetectedObject &in_object,
+  const double expanded_rectangle_size) {
+  return objects2costmap_->makeRectanglePoints(in_object,
+      expanded_rectangle_size);
 }
 
 std::vector<std::vector<std::vector<double>>> TestClass::assignPoints2GridCell(
-    const grid_map::GridMap& gridmap, const pcl::PointCloud<pcl::PointXYZ>::Ptr& in_sensor_points)
-{
+  const grid_map::GridMap &gridmap,
+  const pcl::PointCloud<pcl::PointXYZ>::Ptr &in_sensor_points) {
   points2costmap_->grid_length_x_ = gridmap.getLength()[0];
   points2costmap_->grid_length_y_ = gridmap.getLength()[1];
   points2costmap_->grid_resolution_ = gridmap.getResolution();
@@ -202,8 +207,8 @@ std::vector<std::vector<std::vector<double>>> TestClass::assignPoints2GridCell(
   return points2costmap_->assignPoints2GridCell(gridmap, in_sensor_points);
 }
 
-grid_map::Index TestClass::fetchGridIndexFromPoint(const grid_map::GridMap& gridmap, const pcl::PointXYZ& point)
-{
+grid_map::Index TestClass::fetchGridIndexFromPoint(const grid_map::GridMap
+  &gridmap, const pcl::PointXYZ &point) {
   points2costmap_->grid_length_x_ = gridmap.getLength()[0];
   points2costmap_->grid_length_y_ = gridmap.getLength()[1];
   points2costmap_->grid_resolution_ = gridmap.getResolution();
@@ -212,8 +217,8 @@ grid_map::Index TestClass::fetchGridIndexFromPoint(const grid_map::GridMap& grid
   return points2costmap_->fetchGridIndexFromPoint(point);
 }
 
-bool TestClass::isValidInd(const grid_map::GridMap& gridmap, const grid_map::Index& grid_ind)
-{
+bool TestClass::isValidInd(const grid_map::GridMap &gridmap,
+  const grid_map::Index &grid_ind) {
   points2costmap_->grid_length_x_ = gridmap.getLength()[0];
   points2costmap_->grid_length_y_ = gridmap.getLength()[1];
   points2costmap_->grid_resolution_ = gridmap.getResolution();
@@ -223,44 +228,47 @@ bool TestClass::isValidInd(const grid_map::GridMap& gridmap, const grid_map::Ind
 }
 
 grid_map::Matrix TestClass::calculateCostmap(const double maximum_height_thres,
-                                                  const double minimum_lidar_height_thres, const double grid_min_value,
-                                                  const double grid_max_value, const grid_map::GridMap& gridmap,
-                                                  const std::string& gridmap_layer_name,
-                                                  const std::vector<std::vector<std::vector<double>>> grid_vec)
-{
-  return points2costmap_->calculateCostmap(maximum_height_thres, minimum_lidar_height_thres,
-                                          grid_min_value, grid_max_value,
-                                          gridmap, gridmap_layer_name, grid_vec);
+  const double minimum_lidar_height_thres, const double grid_min_value,
+  const double grid_max_value, const grid_map::GridMap &gridmap,
+  const std::string &gridmap_layer_name,
+  const std::vector<std::vector<std::vector<double>>> grid_vec) {
+  return points2costmap_->calculateCostmap(maximum_height_thres,
+      minimum_lidar_height_thres,
+      grid_min_value, grid_max_value,
+      gridmap, gridmap_layer_name, grid_vec);
 }
 
-geometry_msgs::Point TestClass::makeExpandedPoint(const geometry_msgs::Point& in_centroid,
-                                       const geometry_msgs::Point32& in_corner_point,
-                                       const double expand_polygon_size)
-{
-  return objects2costmap_->makeExpandedPoint(in_centroid, in_corner_point, expand_polygon_size);
+geometry_msgs::Point TestClass::makeExpandedPoint(const geometry_msgs::Point
+  &in_centroid,
+  const geometry_msgs::Point32 &in_corner_point,
+  const double expand_polygon_size) {
+  return objects2costmap_->makeExpandedPoint(in_centroid, in_corner_point,
+      expand_polygon_size);
 }
 
-grid_map::Polygon TestClass::makePolygonFromObjectConvexHull(const autoware_msgs::DetectedObject& in_object,
-                                                  const double expand_polygon_size)
-{
-  return objects2costmap_->makePolygonFromObjectConvexHull(in_object, expand_polygon_size);
+grid_map::Polygon TestClass::makePolygonFromObjectConvexHull(
+  const autoware_msgs::DetectedObject &in_object,
+  const double expand_polygon_size) {
+  return objects2costmap_->makePolygonFromObjectConvexHull(in_object,
+      expand_polygon_size);
 }
 
-void TestClass::setCostInPolygon(const grid_map::Polygon& polygon, const std::string& gridmap_layer_name,
-                                     const float score, grid_map::GridMap& objects_costmap)
-{
-  objects2costmap_->setCostInPolygon(polygon, gridmap_layer_name, score, objects_costmap);
+void TestClass::setCostInPolygon(const grid_map::Polygon &polygon,
+  const std::string &gridmap_layer_name,
+  const float score, grid_map::GridMap &objects_costmap) {
+  objects2costmap_->setCostInPolygon(polygon, gridmap_layer_name, score,
+    objects_costmap);
 }
 
-grid_map::Matrix TestClass::makeCostmapFromObjects(const grid_map::GridMap& costmap,
-                                       const double expand_polygon_size,
-                                       const double size_of_expansion_kernel,
-                                       const autoware_msgs::DetectedObjectArray::ConstPtr& in_objects,
-                                       const bool use_objects_convex_hull)
-{
+grid_map::Matrix TestClass::makeCostmapFromObjects(const grid_map::GridMap
+  &costmap,
+  const double expand_polygon_size,
+  const double size_of_expansion_kernel,
+  const autoware_msgs::DetectedObjectArray::ConstPtr &in_objects,
+  const bool use_objects_convex_hull) {
   return objects2costmap_->makeCostmapFromObjects(costmap,
-                                                  expand_polygon_size,
-                                                  size_of_expansion_kernel,
-                                                  in_objects,
-                                                  use_objects_convex_hull);
+      expand_polygon_size,
+      size_of_expansion_kernel,
+      in_objects,
+      use_objects_convex_hull);
 }

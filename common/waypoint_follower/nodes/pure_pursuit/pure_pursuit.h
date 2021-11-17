@@ -33,7 +33,7 @@ class PurePursuit {
   PurePursuit();
   ~PurePursuit();
 
-  // 前视距离
+  // for setting data
   void setLookaheadDistance(const double &ld) {
     lookahead_distance_ = ld;
   }

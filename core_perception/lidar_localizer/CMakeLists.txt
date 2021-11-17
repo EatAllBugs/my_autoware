@@ -14,7 +14,7 @@ if (OPENMP_FOUND)
 endif ()
 
 find_package(CUDA)
-find_package(Eigen3 QUIET)
+find_package(Eigen3 REQUIRED)
 find_package(autoware_build_flags REQUIRED)
 find_package(autoware_msgs REQUIRED)
 find_package(autoware_config_msgs REQUIRED)

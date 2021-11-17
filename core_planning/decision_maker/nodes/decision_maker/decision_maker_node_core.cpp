@@ -21,37 +21,34 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 
-namespace decision_maker
-{
-void DecisionMakerNode::tryNextState(cstring_t& key)
-{
+namespace decision_maker {
+void DecisionMakerNode::tryNextState(cstring_t &key) {
   ctx_vehicle->nextState(key);
   ctx_mission->nextState(key);
   ctx_behavior->nextState(key);
   ctx_motion->nextState(key);
 }
 
-void DecisionMakerNode::update(void)
-{
+void DecisionMakerNode::update(void) {
   update_msgs();
-  if (ctx_vehicle)
+  if (ctx_vehicle) {
     ctx_vehicle->onUpdate();
-  if (ctx_mission)
+  }
+  if (ctx_mission) {
     ctx_mission->onUpdate();
-  if (ctx_behavior)
+  }
+  if (ctx_behavior) {
     ctx_behavior->onUpdate();
-  if (ctx_motion)
+  }
+  if (ctx_motion) {
     ctx_motion->onUpdate();
+  }
 }
 
-void DecisionMakerNode::run(void)
-{
+void DecisionMakerNode::run(void) {
   ros::Rate loop_rate(5);
-
-  while (ros::ok())
-  {
+  while (ros::ok()) {
     update();
-
     loop_rate.sleep();
   }
 }

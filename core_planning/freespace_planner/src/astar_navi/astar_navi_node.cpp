@@ -16,8 +16,7 @@
 
 #include "freespace_planner/astar_navi.h"
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
   ros::init(argc, argv, "astar_navi");
   AstarNavi node;
   node.run();

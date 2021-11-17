@@ -37,7 +37,6 @@ PurePursuitNode::PurePursuitNode()
   node_status_publisher_ptr_ =
     std::make_shared<autoware_health_checker::NodeStatusPublisher>(nh_,
       private_nh_);
-  // 检查节点发布
   node_status_publisher_ptr_->ENABLE();
   // initialize for PurePursuit
   pp_.setLinearInterpolationParameter(is_linear_interpolation_);
@@ -161,7 +160,6 @@ double PurePursuitNode::computeCommandVelocity() const {
   return command_linear_velocity_;
 }
 
-//计算加速度
 double PurePursuitNode::computeCommandAccel() const {
   const geometry_msgs::Pose current_pose = pp_.getCurrentPose();
   const geometry_msgs::Pose target_pose = pp_.getCurrentWaypoints().at(
@@ -200,9 +198,9 @@ void PurePursuitNode::publishDeviationCurrentPosition(const geometry_msgs::Point
     return;
   }
   double a, b, c;
-  double linear_flag_in =
-    getLinearEquation(waypoints.at(2).pose.pose.position,
-      waypoints.at(1).pose.pose.position, &a, &b, &c);
+  // double linear_flag_in =
+  //   getLinearEquation(waypoints.at(2).pose.pose.position,
+  //     waypoints.at(1).pose.pose.position, &a, &b, &c);
   std_msgs::Float32 msg;
   msg.data = getDistanceBetweenLineAndPoint(point, a, b, c);
   pub17_.publish(msg);

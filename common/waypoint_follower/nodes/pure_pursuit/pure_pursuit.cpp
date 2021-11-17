@@ -24,19 +24,17 @@ PurePursuit::PurePursuit()
   , is_linear_interpolation_(false)
   , next_waypoint_number_(-1)
   , lookahead_distance_(0)
-  , current_linear_velocity_(0)
-  , minimum_lookahead_distance_(6) {
+  , current_linear_velocity_(0.0)
+  , minimum_lookahead_distance_(6.0) {
 }
 
 // Destructor
 PurePursuit::~PurePursuit() {
 }
-// 计算曲率
+
 double PurePursuit::calcCurvature(geometry_msgs::Point target) const {
   double kappa;
-  // 分母 直线距离
-  double denominator = pow(getPlaneDistance(target, next_target_position_), 2);
-  //　分子
+  double denominator = pow(getPlaneDistance(target, current_pose_.position), 2);
   double numerator = 2 * calcRelativeCoordinate(target, current_pose_).y;
   if (denominator != 0) {
     kappa = numerator / denominator;

@@ -28,14 +28,13 @@
 
 #include "astar_search/astar_search.h"
 
-class AstarNavi
-{
-public:
+class AstarNavi {
+ public:
   AstarNavi();
   ~AstarNavi();
   void run();
 
-private:
+ private:
   // ros
   ros::NodeHandle nh_, private_nh_;
   ros::Publisher lane_pub_;
@@ -62,13 +61,13 @@ private:
   bool goal_pose_initialized_;
 
   // functions, callback
-  void costmapCallback(const nav_msgs::OccupancyGrid& msg);
-  void currentPoseCallback(const geometry_msgs::PoseStamped& msg);
-  void goalPoseCallback(const geometry_msgs::PoseStamped& msg);
+  void costmapCallback(const nav_msgs::OccupancyGrid &msg);
+  void currentPoseCallback(const geometry_msgs::PoseStamped &msg);
+  void goalPoseCallback(const geometry_msgs::PoseStamped &msg);
 
   // fucntions
-  tf::Transform getTransform(const std::string& from, const std::string& to);
-  void publishWaypoints(const nav_msgs::Path& path, const double& velocity);
+  tf::Transform getTransform(const std::string &from, const std::string &to);
+  void publishWaypoints(const nav_msgs::Path &path, const double &velocity);
   void publishStopWaypoints();
 };
 

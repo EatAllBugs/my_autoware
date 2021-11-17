@@ -16,10 +16,9 @@
 #include "ff_waypoint_follower_core.h"
 
 
-int main(int argc, char **argv)
-{
-	ros::init(argc, argv, "ff_waypoint_follower");
-	FFSteerControlNS::FFSteerControl controller_x;
-	controller_x.PlannerMainLoop();
-	return 0;
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "ff_waypoint_follower");
+  FFSteerControlNS::FFSteerControl controller_x;
+  controller_x.PlannerMainLoop();
+  return 0;
 }

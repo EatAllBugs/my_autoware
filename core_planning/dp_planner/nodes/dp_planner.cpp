@@ -18,10 +18,9 @@
 
 using namespace std;
 
-int main(int argc, char **argv)
-{
-	ros::init(argc, argv, "dp_planner");
-	PlannerXNS::PlannerX dp_planner;
-	dp_planner.PlannerMainLoop();
-	return 0;
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "dp_planner");
+  PlannerXNS::PlannerX dp_planner;
+  dp_planner.PlannerMainLoop();
+  return 0;
 }
